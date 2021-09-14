@@ -58,11 +58,16 @@ public abstract partial class DocumentationViewer : EditorWindow
     void Events_registeredPackages(PackageRegistrationEventArgs e) =>
         Repaint();
 
+    void Update()
+    {
+        OnViewUpdate();
+    }
+
     void OnGUI()
     {
 
         minSize = new Vector2(651, 436);
-        //maxSize = default;
+        maxSize = new Vector2(4000, 4000);
 
         EnsureCorrectPath(ref file, homeFile);
         EnsureCorrectPath(ref sidebar, sidebarFile);
@@ -230,6 +235,16 @@ public abstract partial class DocumentationViewer : EditorWindow
 
     }
 
+    void OnViewUpdate()
+    {
+
+#if UNITY_MARKDOWN_VIEWER
+        if ((sidebarViewer?.Update() ?? false) || (mainViewer?.Update() ?? false))
+            Repaint();
+#endif
+
+    }
+
     void OnView()
     {
 
@@ -261,7 +276,7 @@ public abstract partial class DocumentationViewer : EditorWindow
             viewer = new MG.MDV.MarkdownViewer(
                 skin: MG.MDV.Preferences.DarkSkin ? darkSkin : lightSkin,
                 file,
-                content: (isSidebar ? ZeroWidthSpace + @"\" + Environment.NewLine + @"[Home](Home)" : "# " + ObjectNames.NicifyVariableName(asset.name)) + Environment.NewLine + Environment.NewLine + asset.text)
+                content: ProcessDocument(asset, isSidebar))
             { drawToolbar = false };
 
         const float sidebarWidth = 250;
@@ -272,11 +287,19 @@ public abstract partial class DocumentationViewer : EditorWindow
         GUILayout.BeginArea(new Rect((isSidebar ? 0 : sidebarWidth) + margin, 0, width - margin, position.height));
         scroll[file] = GUILayout.BeginScrollView(scroll[file], alwaysShowHorizontal: false, alwaysShowVertical: true);
 
-        viewer.Draw(width - GUI.skin.verticalScrollbar.fixedWidth - (margin * 2));
+        viewer.Draw(width - GUI.skin.verticalScrollbar.fixedWidth - (margin * 2) - 44);
 
         GUILayout.EndScrollView();
         GUILayout.EndArea();
 
+    }
+
+    string ProcessDocument(TextAsset asset, bool isSidebar)
+    {
+        if (isSidebar) //Add home and some spacing
+            return ZeroWidthSpace + @"\" + Environment.NewLine + "[Home](Home)" + Environment.NewLine + asset.text;
+        else //Add name of current file as header
+            return (asset.name.EndsWith("Home") ? ZeroWidthSpace.ToString() : "# " + ObjectNames.NicifyVariableName(asset.name)) + Environment.NewLine + Environment.NewLine + asset.text;
     }
 
 #endif
