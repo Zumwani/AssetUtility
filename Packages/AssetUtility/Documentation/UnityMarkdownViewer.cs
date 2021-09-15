@@ -6,6 +6,7 @@ static class UnityMarkdownViewer
 {
 
     const string cloneUri = "https://github.com/Zumwani/UnityMarkdownViewer.git";
+    public const string repoUri = "https://github.com/gwaredd/UnityMarkdownViewer";
     public const string packageName = "com.mischief.markdownviewer";
 
     static bool? m_isInstalled;

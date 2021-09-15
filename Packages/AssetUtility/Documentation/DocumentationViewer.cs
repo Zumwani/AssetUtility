@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#pragma warning disable IDE0052 // Remove unread private members
+using System;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.PackageManager;
@@ -8,9 +8,6 @@ using UnityEngine;
 public abstract partial class DocumentationViewer : EditorWindow
 {
 
-    //TODO: Fix resize
-    //TODO: Fix min max size
-    //TODO: Fix links by adding .md to them (github wiki does not support suffixing .md to hyperlinks, so we need to do so here)
     //TODO: Generate documentation from xml comments
 
     GUISkin lightSkin;
@@ -112,6 +109,19 @@ public abstract partial class DocumentationViewer : EditorWindow
         GUILayout.FlexibleSpace();
 
         GUILayout.Label("The package <b>Unity Markdown Viewer</b> is required to view documentation in editor.", new GUIStyle(EditorStyles.label) { richText = true });
+
+        //'Unity Markdown Viewer' link
+        var rect = GUILayoutUtility.GetLastRect();
+
+        var l1 = EditorStyles.label.CalcSize(new GUIContent("The package "));
+        var l2 = EditorStyles.boldLabel.CalcSize(new GUIContent("Unity Markdown Viewer"));
+
+        var r = new Rect(rect.xMin + l1.x, rect.yMin, l2.x, rect.height);
+
+        if (GUI.Button(r, new GUIContent("", UnityMarkdownViewer.repoUri), GUIStyle.none))
+            Application.OpenURL(UnityMarkdownViewer.repoUri);
+        EditorGUIUtility.AddCursorRect(r, MouseCursor.Link);
+
         if (GUILayout.Button("Install now", new GUIStyle(GUI.skin.button) { margin = new RectOffset(0, 0, 0, bottom: 2) }))
             UnityMarkdownViewer.Install();
 
@@ -217,6 +227,7 @@ public abstract partial class DocumentationViewer : EditorWindow
 
     }
 
+#if UNITY_MARKDOWN_VIEWER
     void HyperlinkHelper_HyperlinkOpened(MG.MDV.HyperlinkOpenEventArgs e)
     {
 
@@ -234,6 +245,7 @@ public abstract partial class DocumentationViewer : EditorWindow
         }
 
     }
+#endif
 
     void OnViewUpdate()
     {
@@ -261,7 +273,7 @@ public abstract partial class DocumentationViewer : EditorWindow
 
     const char ZeroWidthSpace = '​';
 
-    readonly Dictionary<string, Vector2> scroll = new Dictionary<string, Vector2>();
+    readonly System.Collections.Generic.Dictionary<string, Vector2> scroll = new System.Collections.Generic.Dictionary<string, Vector2>();
     void ViewFile(string file, ref MG.MDV.MarkdownViewer viewer, bool isSidebar)
     {
 

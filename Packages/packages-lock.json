@@ -7,10 +7,11 @@
       "dependencies": {}
     },
     "com.mischief.markdownviewer": {
-      "version": "file:UnityMarkdownViewer",
+      "version": "https://github.com/Zumwani/UnityMarkdownViewer.git",
       "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
+      "source": "git",
+      "dependencies": {},
+      "hash": "d3aa4afb86692a618263cdc8022b413b7f270feb"
     },
     "com.unity.collab-proxy": {
       "version": "1.7.1",
