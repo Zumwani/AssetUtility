@@ -1,0 +1,2 @@
+## BaseClass
+Inherit test.
